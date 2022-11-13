@@ -27,20 +27,26 @@ spec:
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
       - name: server
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - all
+          privileged: false
+          readOnlyRootFilesystem: true
         image: adservice
         ports:
         - containerPort: 9555
         env:
         - name: PORT
           value: "9555"
-        - name: DISABLE_STATS
-          value: "1"
-        - name: DISABLE_TRACING
-          value: "1"
-        # - name: JAEGER_SERVICE_ADDR
-        #   value: "jaeger-collector:14268"
         resources:
           requests:
             cpu: 200m
